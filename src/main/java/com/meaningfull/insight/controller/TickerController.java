@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import com.meaningfull.insight.configuration.CassandraConnector;
 import com.meaningfull.insight.configuration.ConfigData;
 import com.meaningfull.insight.services.TickerService;
+import com.meaningfull.insight.tools.BarsManager;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,8 @@ public class TickerController {
     TickerService tickerService;
     @Autowired
     CassandraConnector cassandraConnector;
+    @Autowired
+    BarsManager barsManager;
     int randomNum;
 
     public TickerController() {
@@ -67,18 +71,12 @@ public class TickerController {
 
     @GetMapping({"/history", "/history/"})
     public Map<String, Object> getTickerHistory(@RequestParam String ticker, @RequestParam boolean prod) {
-        String barMap = (String) ConfigData.barsMap.get(ticker);
-        String tweetMap = (String) ConfigData.tweetMap.get(ticker);
-        Type type = new TypeToken<Map<String, Object>>() {
-        }.getType();
-        JsonParser parser = new JsonParser();
-        JsonObject object = parser.parse(barMap).getAsJsonObject();
-        JsonObject tweets = parser.parse(tweetMap).getAsJsonObject();
-        Map<String, Object> params = new Gson().fromJson(object, type);
-        Map<String, Object> tweetParams = new Gson().fromJson(tweets, type);
+        List<Map<String, Object>> rows = cassandraConnector.getRows("SELECT * FROM tweets where stock = '" + ticker + "' ALLOW FILTERING");
+        Map<String, Object> barMap = barsManager.getBarMapForSymbol(ticker);
+        Map<String, Object> tweetParams = Map.of("tweets", rows);
 
         Map<String, Object> responseMap = tickerService.getTickerHistory(ticker, prod);
-        ((Map<String, Object>) responseMap.get(ticker)).putAll(params);
+        ((Map<String, Object>) responseMap.get(ticker)).putAll(barMap);
         ((Map<String, Object>) responseMap.get(ticker)).putAll(tweetParams);
         return responseMap;
     }
@@ -93,6 +91,9 @@ public class TickerController {
         JSONObject quote = (JSONObject) tickerService.getQuote(prod);
         rows.sort(Comparator.comparing(a -> ((String) a.get("stock"))));
 
+        String timeLabel = (String) rows.get(0).get("fetched_at");
+        timeLabel = barsManager.getTheExactTimeLabel(timeLabel);
+
         for (Map<String, Object> row : rows) {
             String ticker = (String) row.get("stock");
             JSONObject tickerQuote = (JSONObject) ((JSONObject) quote.get(ticker)).get("quote");
@@ -101,6 +102,7 @@ public class TickerController {
             Object change = tickerQuote.get("changePercent");
             Object companyName = tickerQuote.get("companyName");
             Object exchange = tickerQuote.get("primaryExchange");
+            barsManager.insertInterestIntoLabel((Double)row.get("last_interest"), ticker, timeLabel);
             row.put("price", price);
             row.put("price_change", change);
             row.put("volume", volume);
