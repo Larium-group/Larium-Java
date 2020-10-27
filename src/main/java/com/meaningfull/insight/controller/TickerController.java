@@ -20,7 +20,10 @@ import java.text.ParseException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Supplier;
 
 /**
  * Created by Shahaf Pariente on 7/19/2020
@@ -70,12 +73,14 @@ public class TickerController {
 //    }
 
     @GetMapping({"/history", "/history/"})
-    public Map<String, Object> getTickerHistory(@RequestParam String ticker, @RequestParam boolean prod) {
+    public Map<String, Object> getTickerHistory(@RequestParam String ticker, @RequestParam boolean prod) throws ExecutionException, InterruptedException {
+        CompletableFuture<Map<String, Object>> historyCompletableFuture = CompletableFuture.supplyAsync(() -> tickerService.getTickerHistory(ticker, prod));
+
         List<Map<String, Object>> rows = cassandraConnector.getRows("SELECT * FROM tweets where stock = '" + ticker + "' ALLOW FILTERING");
         Map<String, Object> barMap = barsManager.getBarMapForSymbol(ticker);
         Map<String, Object> tweetParams = Map.of("tweets", rows);
 
-        Map<String, Object> responseMap = tickerService.getTickerHistory(ticker, prod);
+        Map<String, Object> responseMap = historyCompletableFuture.get();
         ((Map<String, Object>) responseMap.get(ticker)).putAll(barMap);
         ((Map<String, Object>) responseMap.get(ticker)).putAll(tweetParams);
         return responseMap;
