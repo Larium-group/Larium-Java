@@ -26,7 +26,65 @@ public class BarsManager {
     }
 
     public void initBarsMap() {
-        ConfigData.tickerList.forEach(symbol -> symbolsBarMap.put(symbol, Map.of("bars", new LinkedList<Map<String, Object>>())));
+        ConfigData.tickerList.forEach(symbol -> symbolsBarMap.put(symbol, Map.of("bars", initLabelsList())));
+    }
+
+    private List<Map<String, Object>> initLabelsList() {
+        List<Map<String, Object>> labelList = new LinkedList<>();
+        labelList.add(new HashMap<>() {{
+            put("label", "9:30");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "10:00");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "10:30");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "11:00");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "11:30");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "12:00");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "12:30");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "13:00");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "13:30");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "14:00");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "14:30");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "15:00");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "15:30");
+            put("interest", 0);
+        }});
+
+        return labelList;
     }
 
     public List<Map<String, Object>> getBarListForSymbol(String symbol) {
@@ -40,25 +98,26 @@ public class BarsManager {
     public void insertInterestIntoLabel(double interest, String symbol, String label) {
         List<Map<String, Object>> barsMapForSymbol = getBarListForSymbol(symbol);
 
-        Map<String, Object> labelMap = new HashMap<>();
-        labelMap.put("label", label);
-        labelMap.put("interest", interest);
-        barsMapForSymbol.add(labelMap);
+        for(Map<String, Object> timeLabel : barsMapForSymbol) {
+            if(timeLabel.containsValue(label)) {
+                timeLabel.put("interest", interest);
+            }
+        }
     }
 
     public String getTheExactTimeLabel(String label) {
         DateTimeFormatter fullDateFormat = DateTimeFormat.forPattern("MM/dd/yyyy, HH:mm:ss");
         DateTime time = fullDateFormat.parseDateTime(label);
 
-        if(time.getDayOfMonth() > currentTimeMap.getDayOfMonth() && time.getMonthOfYear() > currentTimeMap.getMonthOfYear() && time.getYear() > currentTimeMap.getYear()) {
+        if (time.getDayOfMonth() > currentTimeMap.getDayOfMonth() && time.getMonthOfYear() > currentTimeMap.getMonthOfYear() && time.getYear() > currentTimeMap.getYear()) {
             initBarsMap();
             currentTimeMap = time;
         }
 
         if (time.getMinuteOfHour() > 30) {
-            return time.getHourOfDay() + ":30";
+            return time.getHourOfDay() - 6 + ":30";
         } else {
-            return time.getHourOfDay() + ":00";
+            return time.getHourOfDay() - 6 + ":00";
         }
     }
 }
