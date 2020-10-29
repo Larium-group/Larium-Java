@@ -115,9 +115,9 @@ public class BarsManager {
         }
 
         if (time.getMinuteOfHour() > 30) {
-            return time.getHourOfDay() - 6 + ":30";
+            return time.getHourOfDay() + ":30";
         } else {
-            return time.getHourOfDay() - 6 + ":00";
+            return time.getHourOfDay()  + ":00";
         }
     }
 }

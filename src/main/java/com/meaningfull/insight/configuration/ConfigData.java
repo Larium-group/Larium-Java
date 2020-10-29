@@ -63,7 +63,7 @@ public class ConfigData {
 //    ));
 //
     public static List<String> historyRanges = new LinkedList<>(Collections.singletonList(
-            "1d"
+            "dynamic"
     ));
 
     public static Map<String, Object> barsSymbolMap = Map.ofEntries(
