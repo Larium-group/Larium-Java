@@ -38,10 +38,10 @@ public class TickerController {
     CassandraConnector cassandraConnector;
     @Autowired
     BarsManager barsManager;
-    int randomNum;
+    
 
     public TickerController() {
-        randomNum = ThreadLocalRandom.current().nextInt(0, 10);
+
     }
 
     //    @GetMapping({"/getTicker", "/getTicker/"})
@@ -88,9 +88,7 @@ public class TickerController {
 
     @GetMapping({"/stockdata", "/stockdata/"})
     public Object getStockTable(@RequestParam boolean prod) {
-
         List<Map<String, Object>> rows = cassandraConnector.getRows("SELECT * FROM stocks");
-        int randTicker = ThreadLocalRandom.current().nextInt(0, rows.size() + 1);
 
         ConfigData.tickerList.sort(String::compareTo);
         JSONObject quote = (JSONObject) tickerService.getQuote(prod);
@@ -107,18 +105,12 @@ public class TickerController {
             Object change = tickerQuote.get("change");
             Object companyName = tickerQuote.get("companyName");
             Object exchange = tickerQuote.get("primaryExchange");
-            barsManager.insertInterestIntoLabel((Double)row.get("last_interest"), ticker, timeLabel);
+            barsManager.insertInterestIntoLabel((Double) row.get("last_interest"), ticker, timeLabel);
             row.put("price", price);
             row.put("price_change", change);
             row.put("volume", volume);
             row.put("companyName", companyName);
             row.put("primaryExchange", exchange);
-            if (this.randomNum % 5 == 0 && randTicker == 0) {
-                row.put("events_data", true);
-                System.out.println(row.get("stock") + " " + randTicker);
-            }
-            randTicker--;
-            randomNum++;
         }
         return Map.of("ticker_list", rows);
     }
