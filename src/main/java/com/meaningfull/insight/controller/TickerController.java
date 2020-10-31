@@ -104,7 +104,7 @@ public class TickerController {
             JSONObject tickerQuote = (JSONObject) ((JSONObject) quote.get(ticker)).get("quote");
             Object price = tickerQuote.get("latestPrice");
             Object volume = tickerQuote.get("volume") != null ? tickerQuote.get("volume") : 0;
-            Object change = tickerQuote.get("changePercent");
+            Object change = tickerQuote.get("change");
             Object companyName = tickerQuote.get("companyName");
             Object exchange = tickerQuote.get("primaryExchange");
             barsManager.insertInterestIntoLabel((Double)row.get("last_interest"), ticker, timeLabel);
