@@ -95,6 +95,12 @@ public class IEXApi extends ApiAbstract implements ApiInterface, TokenizeAPI {
         return getResponseBody(httpRequestHandler.getMethod(newUrl));
     }
 
+    public Object getIntraDayPrice(String symbol, boolean proMode) {
+        logger.info("Getting Ticker history from IEX...");
+        String newUrl = getUrlWithToken(String.format("/stock/%s/intraday-prices", symbol), proMode);
+        return getResponseBody(httpRequestHandler.getMethod(newUrl));
+    }
+
     public Object getQuote(boolean proMode) {
         logger.info("Getting Tickers from IEX...");
         Map<String, Object> tickerMap = new HashMap<>();

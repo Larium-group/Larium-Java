@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.zankowski.iextrading4j.api.stocks.Quote;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,13 +59,13 @@ public class TickerService {
     public Map<String, Object> getTickerHistory(String Symbol, boolean proMode) {
         ApiAbstract api = apis.get("IEXApi");
         Map<String, Object> historyRangeList = new LinkedHashMap<>();
-        ConfigData.historyRanges.forEach(range -> historyRangeList.put(range, api.getTickerHistory(Symbol, range,proMode)));
+        ConfigData.historyRanges.forEach(range -> historyRangeList.put(range, api.getTickerHistory(Symbol, range, proMode)));
         return Map.of(Symbol, historyRangeList);
     }
 
     public Map<String, Object> getTickersFromList(List<String> tickers, boolean proMode) {
         Map<String, Object> tickersMap = new LinkedHashMap<>();
-        tickers.forEach(ticker -> tickersMap.putAll(getTickers(ticker,proMode)));
+        tickers.forEach(ticker -> tickersMap.putAll(getTickers(ticker, proMode)));
         return tickersMap;
     }
 
@@ -73,9 +74,20 @@ public class TickerService {
 //        return getTickersFromList(TickersList.tickersList);
     }
 
+    public Map<String, Object> getIntraDay(String symbol, boolean proMode) {
+        ApiAbstract iexApi = apis.get("IEXApi");
+        Map<String, Object> intraDayData =  new HashMap<>() {{
+            put("1d", ((IEXApi) iexApi).getIntraDayPrice(symbol, proMode));
+        }};
+        Map<String, Object> responseMap = new HashMap<>() {{
+            put(symbol, intraDayData);
+        }};
+        return responseMap;
+    }
+
     public Object getQuote(boolean proMode) {
         ApiAbstract iexApi = apis.get("IEXApi");
-        return ((IEXApi)iexApi).getQuote(proMode);
+        return ((IEXApi) iexApi).getQuote(proMode);
     }
 
     public List<Quote> getQuotes(List<String> symbols) {

@@ -74,7 +74,7 @@ public class TickerController {
 
     @GetMapping({"/history", "/history/"})
     public Map<String, Object> getTickerHistory(@RequestParam String ticker, @RequestParam boolean prod) throws ExecutionException, InterruptedException {
-        CompletableFuture<Map<String, Object>> historyCompletableFuture = CompletableFuture.supplyAsync(() -> tickerService.getTickerHistory(ticker, prod));
+        CompletableFuture<Map<String, Object>> historyCompletableFuture = CompletableFuture.supplyAsync(() -> tickerService.getIntraDay(ticker, prod));
 
         List<Map<String, Object>> rows = cassandraConnector.getRows("SELECT * FROM tweets where stock = '" + ticker + "' ALLOW FILTERING");
         Map<String, Object> barMap = barsManager.getBarMapForSymbol(ticker);
