@@ -98,8 +98,8 @@ public class BarsManager {
     public void insertInterestIntoLabel(double interest, String symbol, String label) {
         List<Map<String, Object>> barsMapForSymbol = getBarListForSymbol(symbol);
 
-        for(Map<String, Object> timeLabel : barsMapForSymbol) {
-            if(timeLabel.containsValue(label)) {
+        for (Map<String, Object> timeLabel : barsMapForSymbol) {
+            if (timeLabel.containsValue(label)) {
                 timeLabel.put("interest", interest);
             }
         }
@@ -109,7 +109,11 @@ public class BarsManager {
         DateTimeFormatter fullDateFormat = DateTimeFormat.forPattern("MM/dd/yyyy, HH:mm:ss");
         DateTime time = fullDateFormat.parseDateTime(label);
 
-        if (time.getDayOfMonth() > currentTimeMap.getDayOfMonth() && time.getMonthOfYear() > currentTimeMap.getMonthOfYear() && time.getYear() > currentTimeMap.getYear()) {
+        // The BarMap resets every day at 13:30 UTC Time
+        if (time.getHourOfDay() == 13 && time.getMinuteOfHour() == 29 &&
+                (time.getDayOfMonth() > currentTimeMap.getDayOfMonth()
+                        || time.getMonthOfYear() > currentTimeMap.getMonthOfYear()
+                        || time.getYear() > currentTimeMap.getYear())) {
             initBarsMap();
             currentTimeMap = time;
         }
@@ -117,7 +121,7 @@ public class BarsManager {
         if (time.getMinuteOfHour() > 30) {
             return time.getHourOfDay() + ":30";
         } else {
-            return time.getHourOfDay()  + ":00";
+            return time.getHourOfDay() + ":00";
         }
     }
 }
