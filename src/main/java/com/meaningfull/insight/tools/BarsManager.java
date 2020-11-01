@@ -32,38 +32,6 @@ public class BarsManager {
     private List<Map<String, Object>> initLabelsList() {
         List<Map<String, Object>> labelList = new LinkedList<>();
         labelList.add(new HashMap<>() {{
-            put("label", "9:30");
-            put("interest", 0);
-        }});
-        labelList.add(new HashMap<>() {{
-            put("label", "10:00");
-            put("interest", 0);
-        }});
-        labelList.add(new HashMap<>() {{
-            put("label", "10:30");
-            put("interest", 0);
-        }});
-        labelList.add(new HashMap<>() {{
-            put("label", "11:00");
-            put("interest", 0);
-        }});
-        labelList.add(new HashMap<>() {{
-            put("label", "11:30");
-            put("interest", 0);
-        }});
-        labelList.add(new HashMap<>() {{
-            put("label", "12:00");
-            put("interest", 0);
-        }});
-        labelList.add(new HashMap<>() {{
-            put("label", "12:30");
-            put("interest", 0);
-        }});
-        labelList.add(new HashMap<>() {{
-            put("label", "13:00");
-            put("interest", 0);
-        }});
-        labelList.add(new HashMap<>() {{
             put("label", "13:30");
             put("interest", 0);
         }});
@@ -81,6 +49,38 @@ public class BarsManager {
         }});
         labelList.add(new HashMap<>() {{
             put("label", "15:30");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "16:00");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "16:30");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "17:00");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "17:30");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "18:00");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "18:30");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "19:00");
+            put("interest", 0);
+        }});
+        labelList.add(new HashMap<>() {{
+            put("label", "19:30");
             put("interest", 0);
         }});
 

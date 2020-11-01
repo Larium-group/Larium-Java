@@ -38,7 +38,7 @@ public class TickerController {
     CassandraConnector cassandraConnector;
     @Autowired
     BarsManager barsManager;
-    
+
 
     public TickerController() {
 
