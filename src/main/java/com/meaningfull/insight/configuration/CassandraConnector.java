@@ -58,11 +58,17 @@ public class CassandraConnector {
                         .build());
         List<Map<String, Object>> rows = new LinkedList<>();
         rs.all().forEach(row -> {
-            String replaced = row.getFormattedContents().replace("[", "{").replace("]","}");
-            JsonParser parser = new JsonParser();
-            JsonObject object = parser.parse(replaced).getAsJsonObject();
-            Map<String, Object> params = new Gson().fromJson(object, type);
-            rows.add(params);
+            try {
+                StringBuilder sb = new StringBuilder(row.getFormattedContents());
+                String replaced = sb.replace(0, 1, "{").replace(sb.length() - 1, sb.length(), "}").toString();
+                JsonParser parser = new JsonParser();
+                JsonObject object = parser.parse(replaced).getAsJsonObject();
+                Map<String, Object> params = new Gson().fromJson(object, type);
+
+                rows.add(params);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
         return rows;
     }
