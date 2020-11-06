@@ -20,9 +20,9 @@ public class IEXApi extends ApiAbstract implements ApiInterface, TokenizeAPI {
 
     public IEXApi(ConfigData configData) {
         this.urlSandBox = "https://sandbox.iexapis.com/stable";
-        this.tokenSandBox = "Tsk_df80efc908e44f1d85022ad747e4202f";
+        this.tokenSandBox = "Tpk_c4dc6e0225fd44ed982b13f9a7ae480c";
         this.urlProd = "https://cloud.iexapis.com/stable/";
-        this.tokenProd = "pk_9bd63b0799b843ea8c7e2526ffd5e8b0";
+        this.tokenProd = "pk_931eb2d4b0fd4b6b8c798f05c96888a9 ";
         this.configData = configData;
     }
 
