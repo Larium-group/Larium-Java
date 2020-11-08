@@ -1,9 +1,5 @@
 package com.meaningfull.insight.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import com.meaningfull.insight.configuration.CassandraConnector;
 import com.meaningfull.insight.configuration.ConfigData;
 import com.meaningfull.insight.services.TickerService;
@@ -15,15 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.lang.reflect.Type;
-import java.text.ParseException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Supplier;
 
 /**
  * Created by Shahaf Pariente on 7/19/2020
@@ -77,7 +69,7 @@ public class TickerController {
         CompletableFuture<Map<String, Object>> historyCompletableFuture = CompletableFuture.supplyAsync(() -> tickerService.getIntraDay(ticker, prod));
 
         List<Map<String, Object>> rows = cassandraConnector.getRows("SELECT * FROM tweets where stock = '" + ticker + "' ALLOW FILTERING");
-        Map<String, Object> barMap = barsManager.getBarMapForSymbol(ticker);
+        Map<String, List<Map<String, Object>>> barMap = barsManager.getBarMapForSymbol(ticker);
         Map<String, Object> tweetParams = Map.of("tweets", rows);
 
         Map<String, Object> responseMap = historyCompletableFuture.get();
@@ -112,6 +104,7 @@ public class TickerController {
             row.put("companyName", companyName);
             row.put("primaryExchange", exchange);
         }
+        CompletableFuture.runAsync(() -> barsManager.saveBarsInterestToDb());
         return Map.of("ticker_list", rows);
     }
 }
