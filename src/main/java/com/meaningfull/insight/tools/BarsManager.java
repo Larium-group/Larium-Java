@@ -29,7 +29,7 @@ public class BarsManager {
     private void setScheduleInitialize(Runnable func) {
         Timer timer = new Timer(true);
         long delay = 10000L;
-        long period = 1000L * 60L;  // twice a day
+        long period = 1000L * 60L * 30L;  // twice a day
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -108,7 +108,6 @@ public class BarsManager {
     }
 
     public List<Map<String, Object>> getBarListForSymbol(String symbol) {
-//        getBarInterestFromDb();
         return symbolsBarMap.get(symbol).get("bars");
     }
 
