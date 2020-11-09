@@ -27,15 +27,14 @@ public class BarsManager {
     }
 
     private void setScheduleInitialize(Runnable func) {
-        Timer timer = new Timer(true);
-        long delay = 10000L;
-        long period = 1000L * 60L * 30L;  // twice a day
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
+        new Thread(()->{
+            try {
+                Thread.sleep(10000);
                 func.run();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        }, delay, period);
+        }).start();
     }
 
     public void initBarsMap(List<Map<String, Object>> rows) {
