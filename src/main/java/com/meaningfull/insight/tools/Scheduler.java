@@ -9,7 +9,7 @@ import java.util.TimerTask;
 public interface Scheduler {
     default void setScheduleInitialize(Runnable func, long delay) {
         Timer timer = new Timer(true);
-        long period = 3000L;  // twice a day
+        long period = 1000L*60*10;  // twice a day
         timer.schedule(new TimerTask() {
             @Override
             public void run() {

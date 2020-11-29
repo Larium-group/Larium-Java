@@ -20,12 +20,16 @@ public class PythonScriptRunner implements Scheduler {
 
     @Autowired
     HttpRequestHandler httpRequestHandler;
-    String url = "http://localhost:5000/";
+    String url = "https://larium-brain.herokuapp.com/";
     Map<String, Object> dataFromFile = null;
+
+    public PythonScriptRunner() {
+        setScheduleInitialize(this::getPythonStatus, 5000L);
+    }
 
     public void runScript() {
         httpRequestHandler.getMethod(url + "monitor");
-        setScheduleInitialize(this::getFileData, 3000L);
+        setScheduleInitialize(this::getPythonStatus, 10000L);
     }
 
     public void terminateScript() {
@@ -33,20 +37,20 @@ public class PythonScriptRunner implements Scheduler {
     }
 
     public Map<String, Object> getDataFromFile() {
-        if(dataFromFile == null)
-            getFileData();
+        if (dataFromFile == null)
+            getPythonStatus();
 
         return dataFromFile;
     }
 
-    public void getFileData() {
-        Type type = new TypeToken<Map<String, Object>>(){}.getType();
-        HttpResponse<String> response = httpRequestHandler.getMethod(url + "getFile");
-        dataFromFile = new Gson().fromJson(response.getBody(), type);
+    public void getPythonStatus() {
+        HttpResponse<String> response = httpRequestHandler.getMethod(url);
+        System.out.println("Checked got python server and status is: " + response.getStatus());
     }
 
     public List<String> getStocks() {
-        Type type = new TypeToken<List<String>>(){}.getType();
+        Type type = new TypeToken<List<String>>() {
+        }.getType();
         HttpResponse<String> response = httpRequestHandler.getMethod(url + "stocks");
         return new Gson().fromJson(response.getBody(), type);
     }
